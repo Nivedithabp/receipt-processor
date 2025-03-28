@@ -15,7 +15,15 @@ func RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/receipts/{id}/points", GetPointsHandler).Methods("GET")
 }
 
-// ProcessReceiptHandler handles receipt submission
+// @Summary Process a receipt and generate an ID
+// @Description Submits a receipt and returns a unique ID
+// @Tags Receipts
+// @Accept json
+// @Produce json
+// @Param receipt body models.Receipt true "Receipt JSON"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Router /receipts/process [post]
 func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 	var receipt models.Receipt
 	err := json.NewDecoder(r.Body).Decode(&receipt)
@@ -28,7 +36,14 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"id": id})
 }
 
-// GetPointsHandler retrieves points for a given receipt
+// @Summary Get points for a receipt
+// @Description Returns points for a given receipt ID
+// @Tags Receipts
+// @Produce json
+// @Param id path string true "Receipt ID"
+// @Success 200 {object} map[string]int
+// @Failure 404 {object} map[string]string
+// @Router /receipts/{id}/points [get]
 func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]

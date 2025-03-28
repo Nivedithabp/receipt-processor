@@ -1,0 +1,92 @@
+definitions:
+  models.Item:
+    description: Item model for the receipt
+    properties:
+      price:
+        example: "6.49"
+        type: string
+      shortDescription:
+        example: Mountain Dew 12PK
+        type: string
+    type: object
+  models.Receipt:
+    description: Receipt model for processing
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/models.Item'
+        type: array
+      purchaseDate:
+        example: "2022-01-01"
+        type: string
+      purchaseTime:
+        example: "13:01"
+        type: string
+      retailer:
+        example: Target
+        type: string
+      total:
+        example: "35.35"
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /receipts/{id}/points:
+    get:
+      description: Returns points for a given receipt ID
+      parameters:
+      - description: Receipt ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get points for a receipt
+      tags:
+      - Receipts
+  /receipts/process:
+    post:
+      consumes:
+      - application/json
+      description: Submits a receipt and returns a unique ID
+      parameters:
+      - description: Receipt JSON
+        in: body
+        name: receipt
+        required: true
+        schema:
+          $ref: '#/definitions/models.Receipt'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Process a receipt and generate an ID
+      tags:
+      - Receipts
+swagger: "2.0"
